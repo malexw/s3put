@@ -61,6 +61,7 @@ if __name__ == '__main__':
     arg_parser.add_argument('source', help='The path to the file to upload.')
     arg_parser.add_argument('dest', help='The bucket and key to store the file in on S3.')
     arg_parser.add_argument('-c', '--config', help='Path to optional config file.')
+    arg_parser.add_argument('-v', '--verbose', action='store_true', help='More detailed output when sending files.')
     # TODO: Add flag to automatically create the bucket if it doesn't exist.
     # TODO: Add flag to overwrite existing key if it already exists.
     args = arg_parser.parse_args()
@@ -71,6 +72,9 @@ if __name__ == '__main__':
 
     s3conf = get_s3_config(args.config)
     bucket_id, key_id = calculate_destination(args.dest, args.source, s3conf)
+
+    if args.verbose:
+        print 'Sending file to ' + bucket_id + '/' + key_id
 
     s3c = boto.connect_s3(s3conf.key_id, s3conf.secret_key)
 
