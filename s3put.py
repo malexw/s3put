@@ -42,15 +42,10 @@ def get_s3_config(s3_config_path=None):
     return S3Config(s3_key_id, s3_secret_key, aliases)
 
 def calculate_destination(dest, source, s3conf):
-    if dest in s3conf.aliases:
-        bucket = s3conf.aliases[dest].rstrip('/')
-        key = source.split('/')[-1]
-    else:
-        key_parts = dest.split('/')
-        bucket = key_parts[0]
-        key = '/'.join(key_parts[1:])
-        if key[-1] == '/':
-            key = key + source.split('/')[-1]
+    key_parts = dest.split('/')
+    bucket = s3conf.aliases[key_parts[0]] if key_parts[0] in s3conf.aliases else key_parts[0]
+    key_path = '/'.join(key_parts[1:])
+    key = key_path + source.split('/')[-1] if len(key_path) == 0 or key_path[-1] == '/' else key_path
 
     return (bucket, key)
 
